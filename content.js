@@ -13,8 +13,11 @@
                 if (tds[i].querySelector(".cell-accepted")) solvedArray.push(1);
                 else solvedArray.push(0);
             }
-            if (tds[1].innerText.includes("*")) unstandings[handle] = solvedArray;
-            else standings[handle] = solvedArray;
+            if (tds[1].innerText.includes("*")) {
+                if (!unstandings[handle]) unstandings[handle] = solvedArray;
+            } else {
+                if (!standings[handle]) standings[handle] = solvedArray;
+            }
         });
         new Set([...Object.keys(standings), ...Object.keys(unstandings)]).forEach(handle => {
             let allCounter = 0;
@@ -32,7 +35,7 @@
             allScores[handle].standingsCounter += standingsCounter;
             allScores[handle].unstandingsCounter += unstandingsCounter;
         });
-        // console.table(allScores);
+        console.table(allScores);
     }
     function downloadCSV(result, name) {
         let csv = "handle,solved\n";
@@ -61,7 +64,7 @@
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
         let allResult = Object.entries(allScores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved - a.solved);
-        downloadCSV(allResult, "allResult");
+        // downloadCSV(allResult, "allResult");
     }
     run();
 })();
