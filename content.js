@@ -35,16 +35,15 @@
             allScores[handle].standingsCounter += standingsCounter;
             allScores[handle].unstandingsCounter += unstandingsCounter;
         });
-        console.table(allScores);
     }
-    function downloadCSV(result, name) {
-        let csv = "handle,solved\n";
-        result.forEach(row => { csv += `${row.handle},${row.solved}\n`; });
+    function downloadCSV(result) {
+        let csv = "handle,allCounter,standingsCounter,unstandingsCounter\n";
+        result.forEach(row => { csv += `${row.handle},${row.solved.allCounter},${row.solved.standingsCounter},${row.solved.unstandingsCounter}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `${name}.csv`;
+        a.download = "Codeforces Counter.csv";
         a.click();
         URL.revokeObjectURL(url);
     }
@@ -53,7 +52,6 @@
         const groupId = match ? match[1] : null;
         if (!groupId) return;
         const content = await fetchContentPage(groupId);
-        // let contentLinks = ['https://codeforces.com/group/ad1tgTiYqR/contest/648466'];
         let contentLinks = [];
         content.querySelectorAll("table tr").forEach(row => {
             const cols = row.querySelectorAll("td");
@@ -63,8 +61,8 @@
             contentLinks.push(link.href);
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
-        let allResult = Object.entries(allScores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved - a.solved);
-        // downloadCSV(allResult, "allResult");
+        let result = Object.entries(allScores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.allCounter - a.solved.allCounter);
+        downloadCSV(result);
     }
     run();
 })();
