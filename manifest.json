@@ -1,0 +1,10 @@
+{
+  "manifest_version": 3,
+  "name": "Codeforces Counter",
+  "version": "1.0",
+  "description": "Description",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["activeTab", "scripting", "tabs"]
+}
