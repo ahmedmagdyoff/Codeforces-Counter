@@ -38,3 +38,15 @@ button:hover {
     border: 2px solid #0080FF;
     background-color: #0080FF1A;
 }
+
+p {
+    line-height: 1;
+    font-size: 1rem;
+    margin-top: 1.5rem;
+}
+
+a {
+    color: #0080FF;
+    font-weight: bold;
+    text-decoration: none;
+}
