@@ -13,11 +13,8 @@
                 if (tds[i].querySelector(".cell-accepted")) solved.push(1);
                 else solved.push(0);
             }
-            if (tds[1].innerText.includes("*")) {
-                if (!unstandings[handle]) unstandings[handle] = solved;
-            } else {
-                if (!standings[handle]) standings[handle] = solved;
-            }
+            if (tds[1].innerText.includes("*")) unstandings[handle] ??= solved;
+            else standings[handle] ??= solved;
         });
         new Set([...Object.keys(standings), ...Object.keys(unstandings)]).forEach(handle => {
             let allCounter = 0;
@@ -36,7 +33,7 @@
             scores[handle].unstandings += unstandingsCounter;
         });
     }
-    function downloadCSV(result) {
+    function download(result) {
         let csv = "Handle,All,Standings,UnStandings\n";
         result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
@@ -62,7 +59,7 @@
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
         let result = Object.entries(scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.all - a.solved.all);
-        downloadCSV(result);
+        download(result);
     }
     run();
 })();
