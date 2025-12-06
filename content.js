@@ -1,7 +1,9 @@
 (() => {
+    let total = 0;
     let scores = {};
     async function fetchContentPage(groupId) { return new DOMParser().parseFromString(await (await fetch(`https://codeforces.com/group/${groupId}/contests`)).text(), "text/html"); }
     async function fetchStanding(url) {
+        let check = false;
         let standings = {};
         let unstandings = {};
         new DOMParser().parseFromString(await (await fetch(url)).text(), "text/html").querySelectorAll(".standings tr").forEach(row => {
@@ -12,6 +14,10 @@
             for (let i = 4; i < tds.length; i++) {
                 if (tds[i].querySelector(".cell-accepted")) solved.push(1);
                 else solved.push(0);
+            }
+            if (!check) {
+                total += solved.length;
+                check = true;
             }
             if (tds[1].innerText.includes("*")) unstandings[handle] ??= solved;
             else standings[handle] ??= solved;
@@ -34,8 +40,8 @@
         });
     }
     function download(result) {
-        let csv = "Handle,All,Standings,UnStandings\n";
-        result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings}\n`; });
+        let csv = "Handle,All,Standings,UnStandings,Percentage\n";
+        result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings},${(row.solved.all / total) * 100}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -60,6 +66,7 @@
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
         let result = Object.entries(scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.all - a.solved.all);
         download(result);
+        console.log(total);
     }
     run();
 })();
