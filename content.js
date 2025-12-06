@@ -1,5 +1,5 @@
 (() => {
-    let allScores = {};
+    let Scores = {};
     async function fetchContentPage(groupId) { return new DOMParser().parseFromString(await (await fetch(`https://codeforces.com/group/${groupId}/contests`)).text(), "text/html"); }
     async function fetchStanding(url) {
         let standings = {};
@@ -8,15 +8,15 @@
             if (!row.querySelector(".rated-user")) return;
             const tds = row.querySelectorAll("td");
             const handle = tds[1].querySelector("a").innerText.trim();
-            let solvedArray = [];
+            let solved = [];
             for (let i = 4; i < tds.length; i++) {
-                if (tds[i].querySelector(".cell-accepted")) solvedArray.push(1);
-                else solvedArray.push(0);
+                if (tds[i].querySelector(".cell-accepted")) solved.push(1);
+                else solved.push(0);
             }
             if (tds[1].innerText.includes("*")) {
-                if (!unstandings[handle]) unstandings[handle] = solvedArray;
+                if (!unstandings[handle]) unstandings[handle] = solved;
             } else {
-                if (!standings[handle]) standings[handle] = solvedArray;
+                if (!standings[handle]) standings[handle] = solved;
             }
         });
         new Set([...Object.keys(standings), ...Object.keys(unstandings)]).forEach(handle => {
@@ -30,15 +30,15 @@
                 standingsCounter += standArr[i] || 0;
                 unstandingsCounter += unstandArr[i] || 0;
             }
-            if (!allScores[handle]) allScores[handle] = { allCounter: 0, standingsCounter: 0, unstandingsCounter: 0 };
-            allScores[handle].allCounter += allCounter;
-            allScores[handle].standingsCounter += standingsCounter;
-            allScores[handle].unstandingsCounter += unstandingsCounter;
+            if (!Scores[handle]) Scores[handle] = { all: 0, standings: 0, unstandings: 0 };
+            Scores[handle].all += allCounter;
+            Scores[handle].standings += standingsCounter;
+            Scores[handle].unstandings += unstandingsCounter;
         });
     }
     function downloadCSV(result) {
-        let csv = "handle,allCounter,standingsCounter,unstandingsCounter\n";
-        result.forEach(row => { csv += `${row.handle},${row.solved.allCounter},${row.solved.standingsCounter},${row.solved.unstandingsCounter}\n`; });
+        let csv = "Handle,All,Standings,UnStandings\n";
+        result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings}\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
@@ -61,7 +61,7 @@
             contentLinks.push(link.href);
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
-        let result = Object.entries(allScores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.allCounter - a.solved.allCounter);
+        let result = Object.entries(Scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.allCounter - a.solved.allCounter);
         downloadCSV(result);
     }
     run();
