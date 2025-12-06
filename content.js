@@ -41,7 +41,7 @@
     }
     function download(result) {
         let csv = "Handle,All,Standings,UnStandings,Percentage\n";
-        result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings},${((row.solved.all / total) * 100).toFixed(2)}\n`; });
+        result.forEach(row => { csv += `${row.handle},${row.solved.all},${row.solved.standings},${row.solved.unstandings},${((row.solved.all / total) * 100).toFixed(2)}%\n`; });
         const blob = new Blob([csv], { type: "text/csv" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
