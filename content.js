@@ -1,5 +1,5 @@
 (() => {
-    let Scores = {};
+    let scores = {};
     async function fetchContentPage(groupId) { return new DOMParser().parseFromString(await (await fetch(`https://codeforces.com/group/${groupId}/contests`)).text(), "text/html"); }
     async function fetchStanding(url) {
         let standings = {};
@@ -30,10 +30,10 @@
                 standingsCounter += standArr[i] || 0;
                 unstandingsCounter += unstandArr[i] || 0;
             }
-            if (!Scores[handle]) Scores[handle] = { all: 0, standings: 0, unstandings: 0 };
-            Scores[handle].all += allCounter;
-            Scores[handle].standings += standingsCounter;
-            Scores[handle].unstandings += unstandingsCounter;
+            if (!scores[handle]) scores[handle] = { all: 0, standings: 0, unstandings: 0 };
+            scores[handle].all += allCounter;
+            scores[handle].standings += standingsCounter;
+            scores[handle].unstandings += unstandingsCounter;
         });
     }
     function downloadCSV(result) {
@@ -61,7 +61,7 @@
             contentLinks.push(link.href);
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
-        let result = Object.entries(Scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.allCounter - a.solved.allCounter);
+        let result = Object.entries(scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.all - a.solved.all);
         downloadCSV(result);
     }
     run();
