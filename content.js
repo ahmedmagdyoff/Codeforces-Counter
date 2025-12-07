@@ -28,7 +28,7 @@
             let unstandingsCounter = 0;
             let standArr = standings[handle] || [];
             let unstandArr = unstandings[handle] || [];
-            for (let i = 0; i < standArr.length; i++) {
+            for (let i = 0; i < Math.max(standArr.length, unstandArr.length); i++) {
                 if (standArr[i] === 1 || unstandArr[i] === 1) allCounter++;
                 standingsCounter += standArr[i] || 0;
                 unstandingsCounter += unstandArr[i] || 0;
