@@ -1,4 +1,5 @@
 (() => {
+    // console.clear();
     let total = 0;
     let scores = {};
     async function fetchContentPage(groupId) { return new DOMParser().parseFromString(await (await fetch(`https://codeforces.com/group/${groupId}/contests`)).text(), "text/html"); }
