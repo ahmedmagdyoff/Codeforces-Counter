@@ -6,5 +6,9 @@
   "action": {
     "default_popup": "popup.html"
   },
-  "permissions": ["activeTab", "scripting", "tabs"]
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ]
 }
