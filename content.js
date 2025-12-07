@@ -65,7 +65,11 @@
             contentLinks.push(link.href);
         });
         await Promise.all(contentLinks.map(link => fetchStanding(link + "/standings")));
-        let result = Object.entries(scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => b.solved.all - a.solved.all);
+        let result = Object.entries(scores).map(([handle, solved]) => ({ handle, solved })).sort((a, b) => {
+            if (b.solved.all !== a.solved.all) return b.solved.all - a.solved.all;
+            if (b.solved.standings !== a.solved.standings) return b.solved.standings - a.solved.standings;
+            return b.solved.standings - a.solved.standings;
+        });
         download(result);
     }
     run();
